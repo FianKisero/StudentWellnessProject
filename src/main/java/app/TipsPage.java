@@ -1,20 +1,33 @@
 package app;
 
+import app.service.ValidationService;
 import jakarta.servlet.GenericServlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.inject.Inject;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
 public class TipsPage extends GenericServlet {
 
+    // Setter injection - demonstrates setter method injection point
+    @Inject
+    private ValidationService validationService;
+
     public void service(ServletRequest req, ServletResponse res)
             throws ServletException, IOException {
 
         res.setContentType("text/html");
         PrintWriter writer = res.getWriter();
+
+        String tip = req.getParameter("tip");
+
+        // Use injected validation service
+        if (validationService != null && tip != null) {
+            validationService.validateTips(tip);
+        }
 
         writer.println("<!DOCTYPE html>");
         writer.println("<html lang='en'>");

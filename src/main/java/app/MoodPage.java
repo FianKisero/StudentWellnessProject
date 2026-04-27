@@ -1,14 +1,25 @@
 package app;
 
+import app.service.ComprehensiveValidationService;
+import app.service.StudentService;
 import jakarta.servlet.GenericServlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.inject.Inject;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
 public class MoodPage extends GenericServlet {
+
+    // Field injection - demonstrates field injection point
+    @Inject
+    private ComprehensiveValidationService validationService;
+    
+    // Constructor injection - demonstrates constructor injection point
+    @Inject
+    private StudentService studentService;
 
     public void service(ServletRequest req, ServletResponse res)
             throws ServletException, IOException {
@@ -87,6 +98,11 @@ public class MoodPage extends GenericServlet {
                 bgColor = "#ffebee"; // Energetic Soft Red
                 textColor = "#d32f2f";
                 message = "Great! Use this energy to achieve your goals 💪";
+            }
+
+            // Use injected validation service for additional validation
+            if (validationService != null) {
+                validationService.validateMood(mood);
             }
 
             // Outputting the dynamic result box
