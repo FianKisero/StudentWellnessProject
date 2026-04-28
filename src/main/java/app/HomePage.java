@@ -56,33 +56,51 @@ public class HomePage extends HttpServlet {
             processingTime = (System.nanoTime() - startTime) / 1_000_000;
         }
 
+        /* ── MAIN CONTAINER ────────────────────────────── */
         content.append("<div class='container'>");
-        content.append("<img class='hero-image' src='https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' alt='Calm nature scene' style='max-width: 600px; display: block; margin: 0 auto 25px auto; border-radius: 8px;'>");
 
-        content.append("<div class='welcome-msg'>Welcome back, ").append(username).append("!</div>");
-        content.append("<h1>Student Wellness & Productivity Hub</h1>");
-        content.append("<p>Helping you stay mentally strong and productive.</p>");
-
-        content.append("<div class='nav-links'>");
-        content.append("<a href='./register_mood' class='btn'>Log Your Mood</a><br/>");
-        content.append("<a href='./register_student' class='btn'>Register Student</a>");
+        /* ── HERO SECTION WITH IMAGE ───────────────────── */
+        content.append("<div style='position:relative; border-radius:20px; overflow:hidden; margin-bottom:40px; box-shadow:0 12px 40px rgba(0,0,0,0.12);'>");
+        content.append("<img class='hero-image' src='https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80' alt='Calm nature scene' style='display:block; width:100%;'>");
+        content.append("<div style='position:absolute; inset:0; background:linear-gradient(to top, rgba(15,61,37,0.75) 0%, rgba(15,61,37,0.15) 50%, transparent 100%);'></div>");
+        content.append("<div style='position:absolute; bottom:0; left:0; right:0; padding:36px 32px;'>");
+        content.append("<div class='welcome-msg'>").append("👋 Welcome back, ").append(username).append("</div>");
+        content.append("<h1 style='color:#fff; font-size:2.2rem; margin:10px 0 6px;'>Student Wellness &amp; Productivity Hub</h1>");
+        content.append("<p style='color:rgba(255,255,255,0.8); font-size:1.05rem; margin:0;'>Helping you stay mentally strong, balanced, and productive.</p>");
+        content.append("</div>");
         content.append("</div>");
 
-        // UI section for all Listeners
-        content.append("<div class='footer-info' style='margin-top: 35px; border-top: 1px solid #eee; padding-top: 20px;'>");
+        /* ── ACTION CARDS ROW ──────────────────────────── */
+        content.append("<div class='nav-cards'>");
 
-        // From Session Listener
+        // Log Mood Card
+        content.append("<a href='./register_mood' class='btn' style='flex:1; min-width:200px; padding:18px 28px; font-size:1rem; text-align:center;'>");
+        content.append("<span style='font-size:1.4rem;'>📝</span> Log Your Mood");
+        content.append("</a>");
+
+        // Register Student Card
+        content.append("<a href='./register_student' class='btn' style='flex:1; min-width:200px; padding:18px 28px; font-size:1rem; text-align:center;'>");
+        content.append("<span style='font-size:1.4rem;'>🎓</span> Register Student");
+        content.append("</a>");
+
+        content.append("</div>");
+
+        /* ── FOOTER INFO STRIP ─────────────────────────── */
+        content.append("<div class='footer-info'>");
+
+        // From Session Listener — Active Users
         content.append("<div class='status-badge'>");
-        content.append("<span class='dot'></span> ").append(activeUsers).append(" students online now");
-        content.append("</div><br/>");
+        content.append("<span class='dot'></span> ").append(activeUsers).append(" student").append(activeUsers != 1 ? "s" : "").append(" online");
+        content.append("</div>");
 
-        // From Application Listener
-        content.append("<div class='support-text'>Support: ").append(supportEmail).append("</div>");
+        // From Application Listener — Support
+        content.append("<div class='support-text'>✉ ").append(supportEmail).append("</div>");
 
-        // From Request Listener
-        content.append("<div class='perf-text'>Page processed in ").append(processingTime).append("ms</div>");
+        // From Request Listener — Perf
+        content.append("<div class='perf-text'>⚡ ").append(processingTime).append("ms</div>");
 
         content.append("</div>");
+
         content.append("</div>");
 
         req.setAttribute(PageContent.CONTENT.name(), content.toString());

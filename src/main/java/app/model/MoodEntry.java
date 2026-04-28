@@ -14,7 +14,7 @@ import app.framework.PageMenuItem;
  */
 @DbTable(name = "mood_entries")
 @Cohort12Form(label = "Log a Mood", actionUrl = "./register_mood")
-@Cohort12Table(label = "Mood Logs", tableUrl = "./list_moods", registerUrl = "./register_mood")
+@Cohort12Table(label = "Mood Logs", tableUrl = "./list_moods", registerUrl = "./register_mood", editUrl = "./edit_mood", deleteUrl = "./delete_mood")
 @PageMenuItem(label = "Mood Logs", url = "list_moods")
 public class MoodEntry {
 

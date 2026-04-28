@@ -121,10 +121,19 @@ public class BaseAction<T> extends HttpServlet {
 
     @SuppressWarnings("unchecked")
     public Class<T> getType() {
-        ParameterizedType superClass =
-            (ParameterizedType) getClass().getGenericSuperclass();
-
-        return (Class<T>) superClass.getActualTypeArguments()[0];
+        Class<?> current = getClass();
+        while (current != null) {
+            java.lang.reflect.Type superType = current.getGenericSuperclass();
+            if (superType instanceof ParameterizedType) {
+                ParameterizedType paramType = (ParameterizedType) superType;
+                java.lang.reflect.Type arg = paramType.getActualTypeArguments()[0];
+                if (arg instanceof Class) {
+                    return (Class<T>) arg;
+                }
+            }
+            current = current.getSuperclass();
+        }
+        throw new RuntimeException("Could not resolve generic type for " + getClass().getName());
     }
 
     public List<T> returnData(){

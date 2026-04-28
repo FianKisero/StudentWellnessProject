@@ -14,7 +14,7 @@ import app.framework.PageMenuItem;
  */
 @DbTable(name = "students")
 @Cohort12Form(label = "Register Student", actionUrl = "./register_student")
-@Cohort12Table(label = "Students", tableUrl = "./list_students", registerUrl = "./register_student")
+@Cohort12Table(label = "Students", tableUrl = "./list_students", registerUrl = "./register_student", editUrl = "./edit_student", deleteUrl = "./delete_student")
 @PageMenuItem(label = "Students", url = "list_students")
 public class Student {
 

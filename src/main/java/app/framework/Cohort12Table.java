@@ -14,4 +14,8 @@ public @interface Cohort12Table {
     String tableUrl();
 
     String registerUrl();
+
+    String editUrl() default "";
+
+    String deleteUrl() default "";
 }

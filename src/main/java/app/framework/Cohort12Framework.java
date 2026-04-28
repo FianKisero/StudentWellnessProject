@@ -129,17 +129,25 @@ public class Cohort12Framework {
                 Field idField = clazz.getDeclaredField("id");
                 idField.setAccessible(true);
 
+                String editUrl = cohort12Table.editUrl().isEmpty()
+                    ? "./" + cohort12Table.tableUrl().replace("./list_", "edit_").replace("list_", "edit_")
+                    : cohort12Table.editUrl();
+                String deleteUrl = cohort12Table.deleteUrl().isEmpty()
+                    ? "./" + cohort12Table.tableUrl().replace("./list_", "delete_").replace("list_", "delete_")
+                    : cohort12Table.deleteUrl();
+
                 /* EDIT BUTTON */
-                tableBuilder.append("<a href='./edit_trainer?id=")
+                tableBuilder.append("<a href='").append(editUrl).append("?id=")
                     .append(idField.get(data))
                     .append("' class='icon-btn edit-btn' title='Edit'>");
                 tableBuilder.append("<i class='fa-solid fa-pen'></i>");
                 tableBuilder.append("</a>");
 
                 /* DELETE BUTTON */
-                tableBuilder.append("<a href='./delete_trainer?id=")
+                tableBuilder.append("<a href='").append(deleteUrl).append("?id=")
                     .append(idField.get(data))
-                    .append("' class='icon-btn delete-btn' title='Delete' onclick='return confirm(\"Delete this trainer?\")'>");
+                    .append("' class='icon-btn delete-btn' title='Delete' onclick='return confirm(\"Delete this ")
+                    .append(cohort12Table.label()).append("?\")'>");
                 tableBuilder.append("<i class='fa-solid fa-trash'></i>");
                 tableBuilder.append("</a>");
 
@@ -163,6 +171,72 @@ public class Cohort12Framework {
         tableBuilder.append("</div>");
 
         return tableBuilder.toString();
+    }
+
+    /**
+     * Generates an HTML edit form pre-populated with existing entity data.
+     */
+    public String htmlEditForm(Class<?> clazz, Object entity) {
+
+        if (!clazz.isAnnotationPresent(Cohort12Form.class))
+            return "";
+
+        Cohort12Form formAnnot = clazz.getAnnotation(Cohort12Form.class);
+
+        StringBuilder formBuilder = new StringBuilder();
+        formBuilder.append("<div class='container'>");
+        formBuilder.append("<div class='card'>");
+        formBuilder.append("<h2>Edit ").append(formAnnot.label().replace("Register ", "").replace("Log a ", "")).append("</h2>");
+        formBuilder.append("<form method='POST' action='").append(formAnnot.actionUrl().replace("register_", "update_").replace("register_", "update_")).append("'>");
+
+        // Hidden ID field
+        try {
+            Field idField = clazz.getDeclaredField("id");
+            idField.setAccessible(true);
+            formBuilder.append("<input type='hidden' name='id' value='").append(idField.get(entity)).append("' />");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        formBuilder.append("<div class='form-group'>");
+        for (Field field : clazz.getDeclaredFields()) {
+            if (!field.isAnnotationPresent(Cohort12FormField.class))
+                continue;
+
+            Cohort12FormField fieldInfo = field.getAnnotation(Cohort12FormField.class);
+            String fieldName = fieldInfo.name().isEmpty() ? field.getName() : fieldInfo.name();
+
+            // Get current value
+            String currentValue = "";
+            try {
+                field.setAccessible(true);
+                Object val = field.get(entity);
+                if (val != null) currentValue = val.toString();
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+            formBuilder.append("<label>").append(fieldInfo.label()).append(":</label>");
+            formBuilder.append("<input type='text' name='").append(fieldName)
+                .append("' value='").append(currentValue)
+                .append("' placeholder='Enter ").append(fieldInfo.placeholder()).append("' required />");
+        }
+        formBuilder.append("</div>");
+
+        formBuilder.append("<button type='submit' class='btn'>Update</button>");
+        formBuilder.append("</form>");
+
+        if (clazz.isAnnotationPresent(Cohort12Table.class)) {
+            Cohort12Table cohort12Table = clazz.getAnnotation(Cohort12Table.class);
+            formBuilder.append("<a href=\"")
+                .append(cohort12Table.tableUrl())
+                .append("\"  class='back-link'>&larr; Back to ").append(cohort12Table.label()).append(" </a>");
+        }
+
+        formBuilder.append("</div>");
+        formBuilder.append("</div>");
+
+        return formBuilder.toString();
 
     }
 
